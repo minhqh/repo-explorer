@@ -5,6 +5,7 @@ import ReadmeViewer from './components/ReadmeViewer';
 import RepoTree from './components/RepoTree';
 import { useState } from 'react';
 import './App.css';
+import LanguageChart from './components/LanguageChart';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
@@ -76,8 +77,12 @@ function App() {
             )}
 
             {activeTab === 'architecture' && (
-              <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px', alignItems: 'start' }}>
+                {/* Cột trái: Cây thư mục */}
                 <RepoTree treeData={data.tree} />
+                
+                {/* Cột phải: Biểu đồ ngôn ngữ */}
+                <LanguageChart languages={data.languages} />
               </div>
             )}
             {activeTab === 'dependencies' && <p>🚧 Đang xây dựng phần hiển thị Thư viện...</p>}
