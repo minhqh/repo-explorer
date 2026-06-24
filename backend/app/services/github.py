@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.schemas.github import RepoInfo, RepoTreeItem
 
 class GithubService:
-    def __inti__(self):
+    def __init__(self):
         self.base_url = "https://api.github.com"
         self.headers = {
             "Accept": "application/vnd.github.v3+json",
@@ -16,7 +16,7 @@ class GithubService:
     async def get_repository_info(self, owner: str, repo: str) -> RepoInfo:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/repo/{owner}/{repo}",
+                f"{self.base_url}/repos/{owner}/{repo}",
                 headers=self.headers
             )
             if response.status_code == 404:
