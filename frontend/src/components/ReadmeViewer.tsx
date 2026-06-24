@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import 'github-markdown-css/github-markdown.css';
 
 interface Props {
   content: string;
@@ -16,7 +17,9 @@ export default function ReadmeViewer({ content }: Props) {
   }
 
   return (
-    <div style={{
+    <div 
+    className="markdown-body"
+    style={{
       backgroundColor: '#fff',
       border: '1px solid #d0d7de',
       borderRadius: '6px',
@@ -24,7 +27,8 @@ export default function ReadmeViewer({ content }: Props) {
       maxHeight: '600px', // Đặt giới hạn chiều cao
       overflowY: 'auto',  // Tạo thanh cuộn dọc
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
-    }}>
+    }}
+    >
       <ReactMarkdown 
         remarkPlugins={[remarkGfm]} 
         rehypePlugins={[rehypeRaw]}
