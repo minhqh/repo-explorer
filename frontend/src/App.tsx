@@ -1,21 +1,9 @@
-import { useState } from 'react';
+import { useRepoAnalyzer } from './hooks/useRepoAnalyzer';
 import SearchBar from './components/SearchBar';
 import './App.css';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Hàm này sẽ gọi API ở Task 6
-  const handleAnalyze = (url: string) => {
-    console.log("Bắt đầu phân tích:", url);
-    setIsLoading(true);
-    
-    // Giả lập delay 1.5s giống như đang gọi Backend
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Phân tích xong!");
-    }, 1500);
-  };
+  const { data, isLoading, error, analyze } = useRepoAnalyzer();
 
   return (
     <div style={{ 
@@ -23,17 +11,12 @@ function App() {
       display: 'flex', 
       flexDirection: 'column', 
       alignItems: 'center', 
-      paddingTop: '15vh', // Đẩy nội dung xuống một chút cho giống Google
+      padding: '10vh 20px', 
       fontFamily: 'system-ui, -apple-system, sans-serif' 
     }}>
       
-      {/* Header Area */}
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h2 style={{ 
-          fontSize: '3rem', 
-          margin: '0 0 10px 0', 
-          color: '#24292e' 
-        }}>
+        <h2 style={{ fontSize: '3rem', margin: '0 0 10px 0', color: '#24292e' }}>
           Repo Explorer
         </h2>
         <p style={{ color: '#57606a', fontSize: '1.1rem', margin: 0 }}>
@@ -41,14 +24,30 @@ function App() {
         </p>
       </div>
 
-      {/* Search Area */}
-      <SearchBar onSearch={handleAnalyze} isLoading={isLoading} />
+      <SearchBar onSearch={analyze} isLoading={isLoading} />
 
-      {/* Khu vực giữ chỗ cho UI dữ liệu:
-        Sau này các Tab Info, Tree, Languages, Dependencies sẽ được render ở đây
-      */}
       <div style={{ marginTop: '40px', width: '100%', maxWidth: '1000px' }}>
-        {/* Tab Components sẽ nằm đây */}
+        {/* Hiển thị lỗi nếu có */}
+        {error && (
+          <div style={{ padding: '16px', backgroundColor: '#ffebe9', color: '#cf222e', borderRadius: '6px', border: '1px solid #ff818266' }}>
+            <strong>Lỗi:</strong> {error}
+          </div>
+        )}
+
+        {/* Khu vực In ra dữ liệu thô để Test */}
+        {data && !isLoading && (
+          <div style={{ padding: '20px', backgroundColor: '#f6f8fa', borderRadius: '8px', border: '1px solid #d0d7de' }}>
+            <h3 style={{ marginTop: 0 }}>Dữ liệu đã nhận thành công:</h3>
+            <pre style={{ 
+              overflowX: 'auto', 
+              fontSize: '14px', 
+              maxHeight: '400px', 
+              overflowY: 'auto' 
+            }}>
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
 
     </div>
