@@ -8,7 +8,9 @@ import {
   RepoTree, 
   LanguageChart, 
   DependenciesTab, 
-  AITabPlaceholder 
+  AITabPlaceholder,
+  EmptyState,
+  ErrorState 
 } from './components';
 
 function App() {
@@ -38,10 +40,24 @@ function App() {
       <SearchBar onSearch={analyze} isLoading={isLoading} />
 
       <div style={{ marginTop: '40px', width: '100%', maxWidth: '1000px' }}>
-        {/* Hiển thị lỗi nếu có */}
-        {error && (
-          <div style={{ padding: '16px', backgroundColor: '#ffebe9', color: '#cf222e', borderRadius: '6px', border: '1px solid #ff818266' }}>
-            <strong>Lỗi:</strong> {error}
+        {/* 1. Trạng thái Loading */}
+        {isLoading && (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#57606a' }}>
+            <span style={{ fontSize: '32px', display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span>
+            <p>Đang bóc tách mã nguồn...</p>
+          </div>
+        )}
+
+        {/* 2. Trạng thái Lỗi */}
+        {error && !isLoading && <ErrorState message={error} />}
+
+        {/* 3. Trạng thái Trống (Chưa search) */}
+        {!data && !isLoading && !error && <EmptyState />}
+
+        {/* 4. Trạng thái Thành công (Render Tabs) */}
+        {data && !isLoading && !error && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* ... Toàn bộ logic hiển thị Tabs và các Component giữ nguyên ... */}
           </div>
         )}
 
