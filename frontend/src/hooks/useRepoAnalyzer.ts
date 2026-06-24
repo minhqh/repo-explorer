@@ -1,5 +1,6 @@
 import { useState } from "react";
-import type { APIResponse, RepositoryData } from "../types";
+import type { RepositoryData } from "../types";
+import { githubApi } from "../services/api";
 
 export const useRepoAnalyzer = () => {
     const [data, setData] = useState<RepositoryData | null>(null);
@@ -12,15 +13,7 @@ export const useRepoAnalyzer = () => {
         setData(null);
 
         try {
-            const response = await fetch('http://localhost:8000/api/repository/analyze', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url }),
-            });
-
-            const result: APIResponse<RepositoryData> = await response.json();
+            const result = await githubApi.analyzeRepository(url);
 
             if (!result.success) {
                 throw new Error(result.message || 'Có lỗi xảy ra từ server');
