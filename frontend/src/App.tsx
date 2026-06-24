@@ -2,6 +2,7 @@ import { useRepoAnalyzer } from './hooks/useRepoAnalyzer';
 import SearchBar from './components/SearchBar';
 import RepoInfo from './components/RepoInfo';
 import ReadmeViewer from './components/ReadmeViewer';
+import RepoTree from './components/RepoTree';
 import { useState } from 'react';
 import './App.css';
 
@@ -74,7 +75,11 @@ function App() {
               </div>
             )}
 
-            {activeTab === 'architecture' && <p>🚧 Đang xây dựng phần hiển thị Tree...</p>}
+            {activeTab === 'architecture' && (
+              <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+                <RepoTree treeData={data.tree} />
+              </div>
+            )}
             {activeTab === 'dependencies' && <p>🚧 Đang xây dựng phần hiển thị Thư viện...</p>}
             {activeTab === 'ai' && <p>🚧 Tính năng AI đang được phát triển...</p>}
 
