@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.endpoints.repository import router as repository_router
 
 app = FastAPI(
     title="Github Repo Explorer API",
@@ -14,6 +15,8 @@ app.add_middleware(
     allow_methods=["*"],  # Cho phép mọi phương thức (GET, POST,...)
     allow_headers=["*"],  # Cho phép mọi headers
 )
+
+app.include_router(repository_router)
 
 @app.get("/health", tags=["System"])
 async def health_check():

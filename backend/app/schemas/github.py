@@ -15,3 +15,12 @@ class RepoTreeItem(BaseModel):
     path: str
     type: str # tree cho folder va blob cho file
     size: Optional[int] = None
+
+class AnalyzeRequest(BaseModel):
+    url: str
+
+class RepositoryData(BaseModel):
+    info: RepoInfo
+    readme: str
+    tree: List[RepoTreeItem]
+    languages: dict
