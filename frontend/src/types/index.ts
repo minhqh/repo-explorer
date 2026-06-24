@@ -9,6 +9,13 @@ export interface RepoInfo {
   default_branch: string;
 }
 
+export interface LanguageStat {
+  name: string;
+  value: number;
+  percent: number;
+  color: string;
+}
+
 export interface TreeNode {
   name: string;
   type: string;
@@ -25,7 +32,7 @@ export interface RepositoryData {
   info: RepoInfo;
   readme: string;
   tree: Record<string, TreeNode>;
-  languages: Record<string, number>;
+  languages: LanguageStat[];
   dependencies: DependenciesData;
 }
 

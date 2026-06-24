@@ -24,9 +24,15 @@ class DependenciesData(BaseModel):
     frontend: List[str] = []
     backend: List[str] = []
 
+class LanguageStat(BaseModel):
+    name: str
+    value: int
+    percent: float
+    color: str
+
 class RepositoryData(BaseModel):
     info: RepoInfo
     readme: str
     tree: Dict[str, TreeNode]
-    languages: dict
+    languages: List[LanguageStat]
     dependencies: DependenciesData

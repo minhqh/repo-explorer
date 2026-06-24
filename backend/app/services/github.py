@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from app.core.config import settings
 from app.schemas.github import RepoInfo
 from app.ultis.github import build_tree_structure
+from app.ultis.colors import calculate_language_stats
 
 class GithubService:
     def __init__(self):
@@ -54,7 +55,9 @@ class GithubService:
         if response.status_code == 404:
             return {}
         response.raise_for_status()
-        return response.json()
+
+        raw_data = response.json()
+        return calculate_language_stats(raw_data)
         
     async def get_tree(self, owner: str, repo: str, default_branch: str) -> dict:
         response = await self.client.get(f"{self.base_url}/repos/{owner}/{repo}/git/trees/{default_branch}?recursive=1")
