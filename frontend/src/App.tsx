@@ -6,6 +6,7 @@ import RepoTree from './components/RepoTree';
 import { useState } from 'react';
 import './App.css';
 import LanguageChart from './components/LanguageChart';
+import DependenciesTab from './components/DependenciesTab';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
@@ -85,7 +86,9 @@ function App() {
                 <LanguageChart languages={data.languages} />
               </div>
             )}
-            {activeTab === 'dependencies' && <p>🚧 Đang xây dựng phần hiển thị Thư viện...</p>}
+            {activeTab === 'dependencies' && (
+              <DependenciesTab dependencies={data.dependencies} />
+            )}
             {activeTab === 'ai' && <p>🚧 Tính năng AI đang được phát triển...</p>}
 
           </div>
