@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 class RepoInfo(BaseModel):
     owner: str
@@ -11,10 +11,11 @@ class RepoInfo(BaseModel):
     topics: List[str] = []
     default_branch: str
 
-class RepoTreeItem(BaseModel):
-    path: str
-    type: str # tree cho folder va blob cho file
+class TreeNode(BaseModel):
+    name: str
+    type: str
     size: Optional[int] = None
+    children: Dict[str, "TreeNode"] = {}
 
 class AnalyzeRequest(BaseModel):
     url: str
@@ -26,6 +27,6 @@ class DependenciesData(BaseModel):
 class RepositoryData(BaseModel):
     info: RepoInfo
     readme: str
-    tree: List[RepoTreeItem]
+    tree: Dict[str, TreeNode]
     languages: dict
     dependencies: DependenciesData

@@ -9,10 +9,11 @@ export interface RepoInfo {
   default_branch: string;
 }
 
-export interface RepoTreeItem {
-  path: string;
+export interface TreeNode {
+  name: string;
   type: string;
   size: number | null;
+  children: Record<string, TreeNode>;
 }
 
 export interface DependenciesData {
@@ -23,7 +24,7 @@ export interface DependenciesData {
 export interface RepositoryData {
   info: RepoInfo;
   readme: string;
-  tree: RepoTreeItem[];
+  tree: Record<string, TreeNode>;
   languages: Record<string, number>;
   dependencies: DependenciesData;
 }

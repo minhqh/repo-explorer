@@ -3,7 +3,8 @@ import re
 import httpx
 from fastapi import HTTPException
 from app.core.config import settings
-from app.schemas.github import RepoInfo, RepoTreeItem
+from app.schemas.github import RepoInfo
+from app.ultis.github import build_tree_structure
 
 class GithubService:
     def __init__(self):
@@ -55,14 +56,16 @@ class GithubService:
         response.raise_for_status()
         return response.json()
         
-    async def get_tree(self, owner: str, repo: str, default_branch: str) -> list[RepoTreeItem]:
+    async def get_tree(self, owner: str, repo: str, default_branch: str) -> dict:
         response = await self.client.get(f"{self.base_url}/repos/{owner}/{repo}/git/trees/{default_branch}?recursive=1")
         if response.status_code == 404:
             return []
         response.raise_for_status()
+
         data = response.json()
+        flat_tree = data.get("tree", [])
         
-        return [RepoTreeItem(**item) for item in data.get("tree", [])]
+        return build_tree_structure(flat_tree)
         
     async def get_file_raw(self, owner: str, repo: str, path: str) -> str | None:
         """Hàm phụ trợ lấy nội dung file văn bản thô"""
