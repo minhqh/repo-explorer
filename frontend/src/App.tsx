@@ -1,13 +1,15 @@
 import { useRepoAnalyzer } from './hooks/useRepoAnalyzer';
-import SearchBar from './components/SearchBar';
-import RepoInfo from './components/RepoInfo';
-import ReadmeViewer from './components/ReadmeViewer';
-import RepoTree from './components/RepoTree';
 import { useState } from 'react';
 import './App.css';
-import LanguageChart from './components/LanguageChart';
-import DependenciesTab from './components/DependenciesTab';
-import AITabPlaceholder from './components/AITabPlaceholder';
+import { 
+  SearchBar, 
+  RepoInfo, 
+  ReadmeViewer, 
+  RepoTree, 
+  LanguageChart, 
+  DependenciesTab, 
+  AITabPlaceholder 
+} from './components';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
