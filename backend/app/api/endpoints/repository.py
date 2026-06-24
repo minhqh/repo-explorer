@@ -18,17 +18,19 @@ async def analyze_repository(request: AnalyzeRequest):
     try:
         info = await github_service.get_repository_info(owner, repo)
 
-        readme, languages, tree = await asyncio.gather(
+        readme, languages, tree, dependencies = await asyncio.gather(
             github_service.get_readme(owner, repo),
             github_service.get_languages(owner, repo),
-            github_service.get_tree(owner, repo, info.default_branch)
+            github_service.get_tree(owner, repo, info.default_branch),
+            github_service.get_dependencies(owner, repo)
         )
 
         data = RepositoryData(
             info=info,
             readme=readme,
             tree=tree,
-            languages=languages
+            languages=languages,
+            dependencies=dependencies
         )
 
         return APIResponse(success=True, data=data)

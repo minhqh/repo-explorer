@@ -19,8 +19,13 @@ class RepoTreeItem(BaseModel):
 class AnalyzeRequest(BaseModel):
     url: str
 
+class DependenciesData(BaseModel):
+    frontend: List[str] = []
+    backend: List[str] = []
+
 class RepositoryData(BaseModel):
     info: RepoInfo
     readme: str
     tree: List[RepoTreeItem]
     languages: dict
+    dependencies: DependenciesData
