@@ -7,6 +7,7 @@ import { useState } from 'react';
 import './App.css';
 import LanguageChart from './components/LanguageChart';
 import DependenciesTab from './components/DependenciesTab';
+import AITabPlaceholder from './components/AITabPlaceholder';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
@@ -89,7 +90,9 @@ function App() {
             {activeTab === 'dependencies' && (
               <DependenciesTab dependencies={data.dependencies} />
             )}
-            {activeTab === 'ai' && <p>🚧 Tính năng AI đang được phát triển...</p>}
+            {activeTab === 'ai' && (
+              <AITabPlaceholder />
+            )}
 
           </div>
         )}
