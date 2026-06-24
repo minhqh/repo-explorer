@@ -1,9 +1,14 @@
 import { useRepoAnalyzer } from './hooks/useRepoAnalyzer';
 import SearchBar from './components/SearchBar';
+import RepoInfo from './components/RepoInfo';
+import ReadmeViewer from './components/ReadmeViewer';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
+
+  const [activeTab, setActiveTab] = useState<'overview' | 'architecture' | 'dependencies' | 'ai'>('overview');
 
   return (
     <div style={{ 
@@ -34,22 +39,48 @@ function App() {
           </div>
         )}
 
-        {/* Khu vực In ra dữ liệu thô để Test */}
         {data && !isLoading && (
-          <div style={{ padding: '20px', backgroundColor: '#f6f8fa', borderRadius: '8px', border: '1px solid #d0d7de' }}>
-            <h3 style={{ marginTop: 0 }}>Dữ liệu đã nhận thành công:</h3>
-            <pre style={{ 
-              overflowX: 'auto', 
-              fontSize: '14px', 
-              maxHeight: '400px', 
-              overflowY: 'auto' 
-            }}>
-              {JSON.stringify(data, null, 2)}
-            </pre>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* 1. Thanh điều hướng Tab */}
+            <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #d0d7de', paddingBottom: '10px' }}>
+              <button 
+                onClick={() => setActiveTab('overview')}
+                style={{ background: 'none', border: 'none', padding: '8px 16px', fontWeight: activeTab === 'overview' ? 'bold' : 'normal', borderBottom: activeTab === 'overview' ? '2px solid #fd8c73' : 'none', cursor: 'pointer' }}>
+                📖 Tổng quan
+              </button>
+              <button 
+                onClick={() => setActiveTab('architecture')}
+                style={{ background: 'none', border: 'none', padding: '8px 16px', fontWeight: activeTab === 'architecture' ? 'bold' : 'normal', borderBottom: activeTab === 'architecture' ? '2px solid #fd8c73' : 'none', cursor: 'pointer' }}>
+                🗂️ Kiến trúc (Tree)
+              </button>
+              <button 
+                onClick={() => setActiveTab('dependencies')}
+                style={{ background: 'none', border: 'none', padding: '8px 16px', fontWeight: activeTab === 'dependencies' ? 'bold' : 'normal', borderBottom: activeTab === 'dependencies' ? '2px solid #fd8c73' : 'none', cursor: 'pointer' }}>
+                📦 Thư viện
+              </button>
+              <button 
+                onClick={() => setActiveTab('ai')}
+                style={{ background: 'none', border: 'none', padding: '8px 16px', fontWeight: activeTab === 'ai' ? 'bold' : 'normal', borderBottom: activeTab === 'ai' ? '2px solid #fd8c73' : 'none', cursor: 'pointer', color: '#9b59b6' }}>
+                ✨ AI Analyze
+              </button>
+            </div>
+
+            {/* 2. Nội dung thay đổi theo Tab */}
+            {activeTab === 'overview' && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px', alignItems: 'start' }}>
+                <RepoInfo info={data.info} />
+                <ReadmeViewer content={data.readme} />
+              </div>
+            )}
+
+            {activeTab === 'architecture' && <p>🚧 Đang xây dựng phần hiển thị Tree...</p>}
+            {activeTab === 'dependencies' && <p>🚧 Đang xây dựng phần hiển thị Thư viện...</p>}
+            {activeTab === 'ai' && <p>🚧 Tính năng AI đang được phát triển...</p>}
+
           </div>
         )}
       </div>
-
     </div>
   );
 }
