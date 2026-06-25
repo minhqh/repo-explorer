@@ -36,6 +36,7 @@ export interface RepositoryData {
   dependencies: DependenciesData;
   git_stats?: GitStats;
   markdown_files?: Record<string, string>;
+  health?: RepoHealthIssue[];
 }
 
 export interface APIResponse<T> {
@@ -68,4 +69,10 @@ export interface GitStats {
   top_contributors: ContributorStat[];
   commit_timeline: CommitActivity[];
   recent_commits: CommitDetail[];
+}
+
+export interface RepoHealthIssue {
+  file: string;
+  severity: "critical" | "important" | "low";
+  impact: "high" | "medium" | "low";
 }

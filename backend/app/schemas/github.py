@@ -68,3 +68,4 @@ class RepositoryData(BaseModel):
     dependencies: DependenciesData
     git_stats: Optional[GitStats] = None
     markdown_files: Dict[str, str] = {}
+    health: list[dict] = []
