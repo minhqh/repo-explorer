@@ -9,7 +9,7 @@ export const githubApi = {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -18,7 +18,7 @@ export const githubApi = {
       headers,
       body: JSON.stringify({ url }),
     });
-    
+
     return response.json();
-  }
+  },
 };

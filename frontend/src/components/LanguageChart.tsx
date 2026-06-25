@@ -11,19 +11,35 @@ export default function LanguageChart({ languages }: Props) {
   }
 
   return (
-    <div style={{ /* ... styles ... */ }}>
+    <div
+      style={
+        {
+          /* ... styles ... */
+        }
+      }
+    >
       <h3 style={{ marginTop: 0, marginBottom: 0, fontSize: '16px' }}>Thống kê ngôn ngữ</h3>
-      
+
       <div style={{ width: '100%', height: '250px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={languages} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="value">
+            <Pie
+              data={languages}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={2}
+              dataKey="value"
+            >
               {languages.map((entry) => (
                 <Cell key={entry.name} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip formatter={(value: any) => [`${(value / 1024).toFixed(1)} KB`, 'Dung lượng']} />
-            <Legend verticalAlign="bottom" height={36}/>
+            <Tooltip
+              formatter={(value: any) => [`${(value / 1024).toFixed(1)} KB`, 'Dung lượng']}
+            />
+            <Legend verticalAlign="bottom" height={36} />
           </PieChart>
         </ResponsiveContainer>
       </div>
@@ -31,12 +47,35 @@ export default function LanguageChart({ languages }: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {languages.map((lang) => (
           <div key={lang.name}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', fontWeight: 500 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '13px',
+                marginBottom: '4px',
+                fontWeight: 500,
+              }}
+            >
               <span>{lang.name}</span>
               <span style={{ color: '#57606a' }}>{lang.percent}%</span>
             </div>
-            <div style={{ width: '100%', height: '8px', backgroundColor: '#eaecef', borderRadius: '4px', overflow: 'hidden' }}>
-              <div style={{ width: `${lang.percent}%`, height: '100%', backgroundColor: lang.color, borderRadius: '4px' }} />
+            <div
+              style={{
+                width: '100%',
+                height: '8px',
+                backgroundColor: '#eaecef',
+                borderRadius: '4px',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${lang.percent}%`,
+                  height: '100%',
+                  backgroundColor: lang.color,
+                  borderRadius: '4px',
+                }}
+              />
             </div>
           </div>
         ))}

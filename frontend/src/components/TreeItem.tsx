@@ -13,7 +13,7 @@ export default function TreeItem({ node, level = 0 }: Props) {
 
   return (
     <div>
-      <div 
+      <div
         onClick={() => isFolder && setIsOpen(!isOpen)}
         style={{
           display: 'flex',
@@ -24,15 +24,13 @@ export default function TreeItem({ node, level = 0 }: Props) {
           color: isFolder ? '#0969da' : '#24292e',
           backgroundColor: '#fff',
         }}
-        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f6f8fa'}
-        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f6f8fa')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
       >
         <span style={{ marginRight: '8px', width: '20px', textAlign: 'center' }}>
           {getFileIcon(node.name, isFolder, isOpen)}
         </span>
-        <span style={{ fontSize: '14px', fontFamily: 'monospace' }}>
-          {node.name}
-        </span>
+        <span style={{ fontSize: '14px', fontFamily: 'monospace' }}>{node.name}</span>
       </div>
 
       {isFolder && isOpen && (
@@ -42,9 +40,9 @@ export default function TreeItem({ node, level = 0 }: Props) {
               if (a.type === b.type) return a.name.localeCompare(b.name);
               return a.type === 'tree' ? -1 : 1;
             })
-            .map(child => (
+            .map((child) => (
               <TreeItem key={child.name} node={child} level={level + 1} />
-          ))}
+            ))}
         </div>
       )}
     </div>

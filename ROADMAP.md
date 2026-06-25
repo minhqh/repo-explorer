@@ -40,11 +40,19 @@
 
 > 🛑 **Technical Gate 1: Code Quality**
 >
-> Setup `ruff`, `black`, `eslint`, `prettier`.
+> Status: ✅ Passed
 >
-> **Done when:** Toàn bộ backend/frontend pass linting.
-
----
+> Tools:
+>
+> - Ruff
+> - Black
+> - OXLint
+> - Prettier
+>
+> Verified:
+>
+> - Backend lint pass
+> - Frontend lint pass
 
 - [ ] **Task 16:** Repository Timeline (Visualize project evolution from Git Log)
 - [ ] **Task 17:** LLM Context Pack Generator (`repo_context.md`)

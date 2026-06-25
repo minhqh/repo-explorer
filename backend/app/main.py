@@ -5,7 +5,7 @@ from app.api.endpoints.repository import router as repository_router
 app = FastAPI(
     title="Github Repo Explorer API",
     description="API cho ứng dụng phân tích repository GitHub",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 app.add_middleware(
@@ -18,12 +18,10 @@ app.add_middleware(
 
 app.include_router(repository_router)
 
+
 @app.get("/health", tags=["System"])
 async def health_check():
     """
     Kiểm tra trạng thái hoạt động của server.
     """
-    return {
-        "status": "ok",
-        "message": "Server is running smoothly!"
-    }
+    return {"status": "ok", "message": "Server is running smoothly!"}

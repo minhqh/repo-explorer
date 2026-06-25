@@ -3,3 +3,5 @@ pydantic-settings
 fastapi
 python-dotenv
 uvicorn
+black
+ruff

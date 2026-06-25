@@ -9,16 +9,16 @@ from app.ultis.github import parse_github_url
 router = APIRouter(prefix="/api/repository", tags=["Repository"])
 github_service = GithubService()
 
+
 @router.post("/analyze", response_model=APIResponse[RepositoryData])
 async def analyze_repository(
-    request: AnalyzeRequest,
-    authorization: Optional[str] = Header(None)    
+    request: AnalyzeRequest, authorization: Optional[str] = Header(None)
 ):
     try:
         owner, repo = parse_github_url(request.url)
     except ValueError as e:
         return APIResponse(success=False, message=str(e))
-    
+
     token = None
     if authorization and authorization.startswith("Bearer "):
         token = authorization.replace("Bearer ", "")
@@ -30,7 +30,7 @@ async def analyze_repository(
             github_service.get_readme(owner, repo, token),
             github_service.get_languages(owner, repo, token),
             github_service.get_tree(owner, repo, info.default_branch, token),
-            github_service.get_dependencies(owner, repo, token)
+            github_service.get_dependencies(owner, repo, token),
         )
 
         data = RepositoryData(
@@ -38,13 +38,13 @@ async def analyze_repository(
             readme=readme,
             tree=tree,
             languages=languages,
-            dependencies=dependencies
+            dependencies=dependencies,
         )
 
         return APIResponse(success=True, data=data)
-    
+
     except HTTPException as e:
         return APIResponse(success=False, message=e.detail)
-    
+
     except Exception as e:
         return APIResponse(success=False, message=f"Lỗi hệ thống: {str(e)}")
