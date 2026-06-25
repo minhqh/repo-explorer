@@ -1,6 +1,4 @@
 import asyncio
-import json
-import re
 import httpx
 from typing import Optional
 from fastapi import HTTPException
@@ -9,6 +7,12 @@ from app.schemas.github import GitStats, RepoInfo
 from app.ultis.github import build_tree_structure
 from app.ultis.colors import calculate_language_stats
 from app.ultis.git_stats import calculate_git_statistics
+from app.ultis.file_parser import (
+    parse_package_json,
+    parse_pyproject_toml,
+    parse_requirements_txt,
+)
+from app.ultis.tree_explorer import find_files_in_tree
 
 
 class GithubService:
@@ -111,76 +115,29 @@ class GithubService:
         response.raise_for_status()
         return response.text
 
-    def _find_files(self, tree: dict, target_names: list, current_path: str = "") -> list:
-        """Hàm phụ trợ: Duyệt đệ quy cây thư mục để tìm đường dẫn file"""
-        paths = []
-        for name, node in tree.items():
-            # Xử lý tương thích cả Pydantic Model lẫn dict thường
-            node_type = node.get("type") if isinstance(node, dict) else getattr(node, "type", None)
-            node_children = node.get("children", {}) if isinstance(node, dict) else getattr(node, "children", {})
-            
-            path = f"{current_path}/{name}" if current_path else name
-            if name in target_names and node_type == "blob":
-                paths.append(path)
-            elif node_type == "tree" and node_children:
-                paths.extend(self._find_files(node_children, target_names, path))
-        return paths
     async def get_dependencies(
         self, owner: str, repo: str, tree: dict, token: Optional[str] = None
     ) -> dict:
-        """Vá lỗi Monorepo: Quét toàn bộ repo để tìm file config thay vì chỉ tìm ở root"""
         deps = {"frontend": [], "backend": []}
 
-        pkg_paths = self._find_files(tree, ["package.json"])
-        req_paths = self._find_files(tree, ["requirements.txt"])
-        toml_paths = self._find_files(tree, ["pyproject.toml"])
+        # 1. Dùng utils để duyệt cây
+        pkg_paths = find_files_in_tree(tree, ["package.json"])
+        req_paths = find_files_in_tree(tree, ["requirements.txt"])
+        toml_paths = find_files_in_tree(tree, ["pyproject.toml"])
 
-        async def fetch_and_parse_pkg(path):
+        # 2. Định nghĩa tác vụ I/O (Chỉ gọi API lấy text, parsing đẩy cho utils)
+        async def fetch_and_parse(path, parser_func):
             content = await self.get_file_raw(owner, repo, path, token)
-            if content:
-                try:
-                    data = json.loads(content)
-                    return list(data.get("dependencies", {}).keys()) + list(
-                        data.get("devDependencies", {}).keys()
-                    )
-                except HTTPException as e:
-                    raise str(e) #pass
-            return []
+            return parser_func(content) if content else []
 
-        async def fetch_and_parse_req(path):
-            content = await self.get_file_raw(owner, repo, path, token)
-            res = []
-            if content:
-                for line in content.splitlines():
-                    line = line.strip()
-                    if line and not line.startswith("#"):
-                        pkg_name = re.split(r"[=<>~]", line)[0].strip()
-                        if pkg_name:
-                            res.append(pkg_name)
-            return res
-
-        async def fetch_and_parse_toml(path):
-            content = await self.get_file_raw(owner, repo, path, token)
-            res = []
-            if content:
-                # Cải tiến regex để bắt được nhiều format pyproject (Poetry, PEP 621) hơn
-                matches = re.findall(
-                    r"^([a-zA-Z0-9_\-]+)\s*[=>~]", content, re.MULTILINE
-                )
-                poetry_matches = re.findall(
-                    r'^([a-zA-Z0-9_\-]+)\s*=\s*[\'"].*?[\'"]', content, re.MULTILINE
-                )
-                res.extend(matches + poetry_matches)
-            return res
-
-        # Khởi chạy tải tất cả các file config song song
+        # 3. Chạy song song
         tasks = []
         for p in pkg_paths:
-            tasks.append(fetch_and_parse_pkg(p))
+            tasks.append(fetch_and_parse(p, parse_package_json))
         for p in req_paths:
-            tasks.append(fetch_and_parse_req(p))
+            tasks.append(fetch_and_parse(p, parse_requirements_txt))
         for p in toml_paths:
-            tasks.append(fetch_and_parse_toml(p))
+            tasks.append(fetch_and_parse(p, parse_pyproject_toml))
 
         if not tasks:
             return deps
