@@ -21,4 +21,18 @@ export const githubApi = {
 
     return response.json();
   },
+
+  fetchMoreCommits: async (owner: string, repo: string, page: number): Promise<APIResponse<any[]>> => {
+    const token = localStorage.getItem('github_pat');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(`${API_BASE_URL}/repository/commits?owner=${owner}&repo=${repo}&page=${page}`, {
+      method: 'GET',
+      headers,
+    });
+    return response.json();
+  },
 };
+
+

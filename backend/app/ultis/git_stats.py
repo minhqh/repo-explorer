@@ -1,6 +1,6 @@
 from collections import Counter
 from typing import List
-from app.schemas.github import GitStats, ContributorStat, CommitActivity
+from app.schemas.github import CommitDetail, GitStats, ContributorStat, CommitActivity
 
 
 def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
@@ -16,6 +16,7 @@ def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
 
     authors = []
     dates = []
+    recent_commits = []
 
     for item in commits_data:
         # Bóc tách Tác giả
@@ -40,6 +41,12 @@ def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
             date_str = raw_date.split("T")[0]
             dates.append(date_str)
 
+        sha = item.get("sha", "")
+        msg_raw = item.get("commit", {}).get("message", "No message")
+        message = msg_raw.split('\n')[0]
+
+        recent_commits.append(CommitDetail(sha=sha, message=message, author=author_name, date=date_str))
+
     author_counts = Counter(authors)
     date_counts = Counter(dates)
 
@@ -63,4 +70,5 @@ def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
         unique_contributors=len(author_counts),
         top_contributors=top_contributors,
         commit_timeline=commit_timeline,
+        recent_commits=recent_commits,
     )

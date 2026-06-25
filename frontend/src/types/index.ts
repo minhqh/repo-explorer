@@ -54,9 +54,17 @@ export interface CommitActivity {
   count: number;
 }
 
+export interface CommitDetail {
+  sha: string;
+  message: string;
+  author: string;
+  date: string;
+}
+
 export interface GitStats {
   total_commits: number;
   unique_contributors: number;
   top_contributors: ContributorStat[];
   commit_timeline: CommitActivity[];
+  recent_commits: CommitDetail[];
 }

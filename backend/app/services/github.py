@@ -175,3 +175,17 @@ class GithubService:
                 status_code=e.response.status_code,
                 detail=f"GitHub API Error: {e.response.text}",
             )
+        
+    async def get_commits_page(self, owner: str, repo: str, page: int, token: Optional[str] = None) -> list:
+        """Fetch các trang commit tiếp theo (cho tính năng Load More)"""
+        try:
+            response = await self.client.get(
+                f"{self.base_url}/repos/{owner}/{repo}/commits?per_page=100&page={page}",
+                headers=self._get_headers(token),
+            )
+            if response.status_code == 404 or response.status_code == 409:
+                return []
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=e.response.status_code, detail=f"GitHub API Error: {e.response.text}")

@@ -46,12 +46,18 @@ class CommitActivity(BaseModel):
     date: str
     count: int
 
+class CommitDetail(BaseModel):
+    sha: str
+    message: str
+    author: str
+    date: str
 
 class GitStats(BaseModel):
     total_commits: int
     unique_contributors: int
     top_contributors: List[ContributorStat]
     commit_timeline: List[CommitActivity]
+    recent_commits: List[CommitDetail]
 
 
 class RepositoryData(BaseModel):

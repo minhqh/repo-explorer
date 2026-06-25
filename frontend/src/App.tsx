@@ -13,6 +13,7 @@ import {
   EmptyState,
   ErrorState,
 } from './components';
+import { downloadMarkdown, generateContextPack } from './ultis/contextBuilder';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
@@ -148,6 +149,27 @@ function App() {
               >
                 ✨ AI Analyze
               </button>
+              <button
+                onClick={() => {
+                  const mdContext = generateContextPack(data);
+                  downloadMarkdown(mdContext, `${data.info.name}_context_pack.md`);
+                }}
+                style={{
+                  marginLeft: 'auto', // Đẩy nút về bên phải
+                  backgroundColor: '#2da44e',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                📦 Download AI Context
+              </button>
             </div>
 
             {/* 2. Nội dung thay đổi theo Tab */}
@@ -183,7 +205,13 @@ function App() {
             )}
             {activeTab === 'dependencies' && <DependenciesTab dependencies={data.dependencies} />}
             {activeTab === 'ai' && <AITabPlaceholder />}
-            {activeTab === 'activity' && <GitActivityTab stats={data.git_stats} />}
+            {activeTab === 'activity' && (
+              <GitActivityTab
+                stats={data.git_stats}
+                owner={data.info.owner}
+                repo={data.info.name}
+              />
+            )}
           </div>
         )}
       </div>
