@@ -4,9 +4,10 @@ import httpx
 from typing import Optional
 from fastapi import HTTPException
 from app.core.config import settings
-from app.schemas.github import RepoInfo
+from app.schemas.github import GitStats, RepoInfo
 from app.ultis.github import build_tree_structure
 from app.ultis.colors import calculate_language_stats
+from app.ultis.git_stats import calculate_git_statistics
 
 
 class GithubService:
@@ -146,3 +147,31 @@ class GithubService:
         deps["backend"] = sorted(list(set(deps["backend"])))
 
         return deps
+
+    async def get_git_stats(
+        self, owner: str, repo: str, token: Optional[str] = None
+    ) -> GitStats:
+        """Cào lịch sử commit và giao việc bóc tách số liệu cho Ultis."""
+        try:
+            response = await self.client.get(
+                f"{self.base_url}/repos/{owner}/{repo}/commits?per_page=100",
+                headers=self._get_headers(token),
+            )
+            if response.status_code == 404 or response.status_code == 409:
+                return GitStats(
+                    total_commits=0,
+                    unique_contributors=0,
+                    top_contributors=[],
+                    commit_timeline=[],
+                )
+
+            response.raise_for_status()
+            commits_data = response.json()
+
+            return calculate_git_statistics(commits_data)
+
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(
+                status_code=e.response.status_code,
+                detail=f"GitHub API Error: {e.response.text}",
+            )

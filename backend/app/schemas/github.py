@@ -36,9 +36,28 @@ class LanguageStat(BaseModel):
     color: str
 
 
+class ContributorStat(BaseModel):
+    author: str
+    commits: int
+    percentage: float
+
+
+class CommitActivity(BaseModel):
+    date: str
+    count: int
+
+
+class GitStats(BaseModel):
+    total_commits: int
+    unique_contributors: int
+    top_contributors: List[ContributorStat]
+    commit_timeline: List[CommitActivity]
+
+
 class RepositoryData(BaseModel):
     info: RepoInfo
     readme: str
     tree: Dict[str, TreeNode]
     languages: List[LanguageStat]
     dependencies: DependenciesData
+    git_stats: Optional[GitStats] = None

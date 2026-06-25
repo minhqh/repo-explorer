@@ -11,12 +11,12 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   const [token, setToken] = useState('');
 
   useEffect(() => {
-        const savedToken = localStorage.getItem('github_pat');
-        if (savedToken) {
-            setToken(savedToken);
-            setIsPrivate(true);
-        }
-    }, []);
+    const savedToken = localStorage.getItem('github_pat');
+    if (savedToken) {
+      setToken(savedToken);
+      setIsPrivate(true);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

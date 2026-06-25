@@ -9,6 +9,7 @@ import {
   LanguageChart,
   DependenciesTab,
   AITabPlaceholder,
+  GitActivityTab,
   EmptyState,
   ErrorState,
 } from './components';
@@ -16,9 +17,9 @@ import {
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'architecture' | 'dependencies' | 'ai'>(
-    'overview'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'architecture' | 'dependencies' | 'activity' | 'ai'
+  >('overview');
 
   return (
     <div
@@ -121,6 +122,19 @@ function App() {
                 📦 Thư viện
               </button>
               <button
+                onClick={() => setActiveTab('activity')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '8px 16px',
+                  fontWeight: activeTab === 'activity' ? 'bold' : 'normal',
+                  borderBottom: activeTab === 'activity' ? '2px solid #fd8c73' : 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                📈 Hoạt động
+              </button>
+              <button
                 onClick={() => setActiveTab('ai')}
                 style={{
                   background: 'none',
@@ -169,6 +183,7 @@ function App() {
             )}
             {activeTab === 'dependencies' && <DependenciesTab dependencies={data.dependencies} />}
             {activeTab === 'ai' && <AITabPlaceholder />}
+            {activeTab === 'activity' && <GitActivityTab stats={data.git_stats} />}
           </div>
         )}
       </div>

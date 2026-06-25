@@ -36,7 +36,7 @@
 *Tập trung cào dữ liệu, chuẩn hóa môi trường và tổng hợp ngữ cảnh cho AI.*
 
 - [x] **Task 14:** Private Repository Support (Session token via `localStorage`)
-- [ ] **Task 15:** Git Log Statistics (Raw metrics & Derived ratios)
+- [x] **Task 15:** Git Log Statistics (Raw metrics & Derived ratios)
 
 > 🛑 **Technical Gate 1: Code Quality**
 >

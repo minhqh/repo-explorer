@@ -34,10 +34,29 @@ export interface RepositoryData {
   tree: Record<string, TreeNode>;
   languages: LanguageStat[];
   dependencies: DependenciesData;
+  git_stats?: GitStats;
 }
 
 export interface APIResponse<T> {
   success: boolean;
   data?: T;
   message?: string;
+}
+
+export interface ContributorStat {
+  author: string;
+  commits: number;
+  percentage: number;
+}
+
+export interface CommitActivity {
+  date: string;
+  count: number;
+}
+
+export interface GitStats {
+  total_commits: number;
+  unique_contributors: number;
+  top_contributors: ContributorStat[];
+  commit_timeline: CommitActivity[];
 }
