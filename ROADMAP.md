@@ -60,10 +60,14 @@
 
 > 🛑 **Technical Gate 2: Testing**
 >
+> Status: ✅ Passed
+>
 > Setup `pytest` và test các logic cốt lõi.
 >
 > **Done when:** Parse URL, Git Log và Scanner đều có unit tests.
-
+>
+> Tools: Pytest
+>
 ---
 
 - [ ] **Task 19:** Repository Snapshot & Health Score Dashboard

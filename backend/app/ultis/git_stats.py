@@ -12,6 +12,7 @@ def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
             unique_contributors=0,
             top_contributors=[],
             commit_timeline=[],
+            recent_commits=[],
         )
 
     authors = []
