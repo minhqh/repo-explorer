@@ -35,6 +35,7 @@ export interface RepositoryData {
   languages: LanguageStat[];
   dependencies: DependenciesData;
   git_stats?: GitStats;
+  markdown_files?: Record<string, string>;
 }
 
 export interface APIResponse<T> {

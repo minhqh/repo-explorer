@@ -26,12 +26,16 @@ async def analyze_repository(
     try:
         info = await github_service.get_repository_info(owner, repo, token)
 
-        readme, languages, tree, dependencies, git_stats = await asyncio.gather(
+        readme, languages, tree, git_stats = await asyncio.gather(
             github_service.get_readme(owner, repo, token),
             github_service.get_languages(owner, repo, token),
             github_service.get_tree(owner, repo, info.default_branch, token),
-            github_service.get_dependencies(owner, repo, token),
             github_service.get_git_stats(owner, repo, token),
+        )
+
+        dependencies, markdown_files = await asyncio.gather(
+            github_service.get_dependencies(owner, repo, tree, token),
+            github_service.get_important_markdowns(owner, repo, tree, token)
         )
 
         data = RepositoryData(
@@ -41,6 +45,7 @@ async def analyze_repository(
             languages=languages,
             dependencies=dependencies,
             git_stats=git_stats,
+            markdown_files=markdown_files,
         )
 
         return APIResponse(success=True, data=data)

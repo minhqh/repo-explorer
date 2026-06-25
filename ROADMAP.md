@@ -55,7 +55,7 @@
 > - Frontend lint pass
 
 - [x] **Task 16:** Repository Timeline (Visualize project evolution from Git Log)
-- [ ] **Task 17:** LLM Context Pack Generator (`repo_context.md`)
+- [x] **Task 17:** LLM Context Pack Generator (`repo_context.md`)
 - [ ] **Task 18:** Rule-based Configuration Scanner (Check missing `.gitignore`, `LICENSE`, etc.)
 
 > 🛑 **Technical Gate 2: Testing**

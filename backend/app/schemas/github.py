@@ -67,3 +67,4 @@ class RepositoryData(BaseModel):
     languages: List[LanguageStat]
     dependencies: DependenciesData
     git_stats: Optional[GitStats] = None
+    markdown_files: Dict[str, str] = {}

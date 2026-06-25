@@ -1,3 +1,4 @@
+import asyncio
 import json
 import re
 import httpx
@@ -110,43 +111,130 @@ class GithubService:
         response.raise_for_status()
         return response.text
 
+    def _find_files(self, tree: dict, target_names: list, current_path: str = "") -> list:
+        """Hàm phụ trợ: Duyệt đệ quy cây thư mục để tìm đường dẫn file"""
+        paths = []
+        for name, node in tree.items():
+            # Xử lý tương thích cả Pydantic Model lẫn dict thường
+            node_type = node.get("type") if isinstance(node, dict) else getattr(node, "type", None)
+            node_children = node.get("children", {}) if isinstance(node, dict) else getattr(node, "children", {})
+            
+            path = f"{current_path}/{name}" if current_path else name
+            if name in target_names and node_type == "blob":
+                paths.append(path)
+            elif node_type == "tree" and node_children:
+                paths.extend(self._find_files(node_children, target_names, path))
+        return paths
     async def get_dependencies(
-        self, owner: str, repo: str, token: Optional[str] = None
+        self, owner: str, repo: str, tree: dict, token: Optional[str] = None
     ) -> dict:
+        """Vá lỗi Monorepo: Quét toàn bộ repo để tìm file config thay vì chỉ tìm ở root"""
         deps = {"frontend": [], "backend": []}
 
-        pkg_json = await self.get_file_raw(owner, repo, "package.json", token)
-        if pkg_json:
-            try:
-                data = json.loads(pkg_json)
-                frontend_deps = list(data.get("dependencies", {}).keys()) + list(
-                    data.get("devDependencies", {}).keys()
+        pkg_paths = self._find_files(tree, ["package.json"])
+        req_paths = self._find_files(tree, ["requirements.txt"])
+        toml_paths = self._find_files(tree, ["pyproject.toml"])
+
+        async def fetch_and_parse_pkg(path):
+            content = await self.get_file_raw(owner, repo, path, token)
+            if content:
+                try:
+                    data = json.loads(content)
+                    return list(data.get("dependencies", {}).keys()) + list(
+                        data.get("devDependencies", {}).keys()
+                    )
+                except HTTPException as e:
+                    raise str(e) #pass
+            return []
+
+        async def fetch_and_parse_req(path):
+            content = await self.get_file_raw(owner, repo, path, token)
+            res = []
+            if content:
+                for line in content.splitlines():
+                    line = line.strip()
+                    if line and not line.startswith("#"):
+                        pkg_name = re.split(r"[=<>~]", line)[0].strip()
+                        if pkg_name:
+                            res.append(pkg_name)
+            return res
+
+        async def fetch_and_parse_toml(path):
+            content = await self.get_file_raw(owner, repo, path, token)
+            res = []
+            if content:
+                # Cải tiến regex để bắt được nhiều format pyproject (Poetry, PEP 621) hơn
+                matches = re.findall(
+                    r"^([a-zA-Z0-9_\-]+)\s*[=>~]", content, re.MULTILINE
                 )
-                deps["frontend"].extend(frontend_deps)
-            except json.JSONDecodeError:
-                pass
+                poetry_matches = re.findall(
+                    r'^([a-zA-Z0-9_\-]+)\s*=\s*[\'"].*?[\'"]', content, re.MULTILINE
+                )
+                res.extend(matches + poetry_matches)
+            return res
 
-        req_txt = await self.get_file_raw(owner, repo, "requirements.txt", token)
-        if req_txt:
-            lines = req_txt.splitlines()
-            for line in lines:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    pkg_name = re.split(r"[=<>~]", line)[0].strip()
-                    if pkg_name:
-                        deps["backend"].append(pkg_name)
+        # Khởi chạy tải tất cả các file config song song
+        tasks = []
+        for p in pkg_paths:
+            tasks.append(fetch_and_parse_pkg(p))
+        for p in req_paths:
+            tasks.append(fetch_and_parse_req(p))
+        for p in toml_paths:
+            tasks.append(fetch_and_parse_toml(p))
 
-        pyproject = await self.get_file_raw(owner, repo, "pyproject.toml", token)
-        if pyproject:
-            deps_matches = re.findall(
-                r'^([a-zA-Z0-9_\-]+)\s*=\s*[\'"].*?[\'"]', pyproject, re.MULTILINE
-            )
-            deps["backend"].extend(deps_matches)
+        if not tasks:
+            return deps
+        results = await asyncio.gather(*tasks)
+
+        idx = 0
+        for _ in pkg_paths:
+            deps["frontend"].extend(results[idx])
+            idx += 1
+        for _ in req_paths:
+            deps["backend"].extend(results[idx])
+            idx += 1
+        for _ in toml_paths:
+            deps["backend"].extend(results[idx])
+            idx += 1
 
         deps["frontend"] = sorted(list(set(deps["frontend"])))
         deps["backend"] = sorted(list(set(deps["backend"])))
-
         return deps
+
+    async def get_important_markdowns(
+        self, owner: str, repo: str, tree: dict, token: Optional[str] = None
+    ) -> dict:
+        """Task 17: Cào nội dung các file .md quan trọng (trừ README đã có)"""
+        target_files = [
+            "CONTRIBUTING.md",
+            "ROADMAP.md",
+            "CHANGELOG.md",
+            "ARCHITECTURE.md",
+        ]
+        paths = []
+
+        # Chỉ quét ở Root (tránh cào nhầm các file .md rác trong node_modules hay docs con)
+        for name, node in tree.items():
+            node_type = (
+                node.get("type")
+                if isinstance(node, dict)
+                else getattr(node, "type", None)
+            )
+            if node_type == "blob" and name.upper() in target_files:
+                paths.append(name)
+
+        results = {}
+
+        async def fetch_md(path):
+            content = await self.get_file_raw(owner, repo, path, token)
+            if content:
+                results[path] = content
+
+        tasks = [fetch_md(p) for p in paths]
+        if tasks:
+            await asyncio.gather(*tasks)
+
+        return results
 
     async def get_git_stats(
         self, owner: str, repo: str, token: Optional[str] = None
@@ -175,8 +263,10 @@ class GithubService:
                 status_code=e.response.status_code,
                 detail=f"GitHub API Error: {e.response.text}",
             )
-        
-    async def get_commits_page(self, owner: str, repo: str, page: int, token: Optional[str] = None) -> list:
+
+    async def get_commits_page(
+        self, owner: str, repo: str, page: int, token: Optional[str] = None
+    ) -> list:
         """Fetch các trang commit tiếp theo (cho tính năng Load More)"""
         try:
             response = await self.client.get(
@@ -188,4 +278,7 @@ class GithubService:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            raise HTTPException(status_code=e.response.status_code, detail=f"GitHub API Error: {e.response.text}")
+            raise HTTPException(
+                status_code=e.response.status_code,
+                detail=f"GitHub API Error: {e.response.text}",
+            )
