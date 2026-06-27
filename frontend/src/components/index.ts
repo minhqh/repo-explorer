@@ -6,4 +6,5 @@ export { default as LanguageChart } from './LanguageChart';
 export { default as DependenciesTab } from './DependenciesTab';
 export { default as AITabPlaceholder } from './AITabPlaceholder';
 export { default as GitActivityTab } from './GitActivityTab';
+export { HealthScoreDashboard } from './HealthScoreDashboard';
 export * from './FeedbackStates';

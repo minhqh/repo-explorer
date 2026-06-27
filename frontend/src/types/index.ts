@@ -36,7 +36,7 @@ export interface RepositoryData {
   dependencies: DependenciesData;
   git_stats?: GitStats;
   markdown_files?: Record<string, string>;
-  health?: RepoHealthIssue[];
+  health_score?: HealthScore;
 }
 
 export interface APIResponse<T> {
@@ -71,8 +71,22 @@ export interface GitStats {
   recent_commits: CommitDetail[];
 }
 
-export interface RepoHealthIssue {
+export interface HealthIssue {
   file: string;
-  severity: "critical" | "important" | "low";
-  impact: "high" | "medium" | "low";
+  severity: string;
+  impact: string;
+}
+
+export interface PenaltyBonus {
+  item: string;
+  value: number;
+  description: string;
+}
+
+export interface HealthScore {
+  total_score: number;
+  grade: string;
+  issues: HealthIssue[];
+  penalties: PenaltyBonus[];
+  bonuses: PenaltyBonus[];
 }

@@ -5,7 +5,7 @@ from app.schemas.response import APIResponse
 from app.schemas.github import AnalyzeRequest, RepositoryData
 from app.services.github import GithubService
 from app.ultis.github import parse_github_url
-from app.services.scanner import RepoScanner
+from app.ultis.health_scorer import RepoHealthScorer
 
 router = APIRouter(prefix="/api/repository", tags=["Repository"])
 github_service = GithubService()
@@ -34,12 +34,13 @@ async def analyze_repository(
             github_service.get_git_stats(owner, repo, token),
         )
 
-        health = RepoScanner.check_health(tree)
 
         dependencies, markdown_files = await asyncio.gather(
             github_service.get_dependencies(owner, repo, tree, token),
             github_service.get_important_markdowns(owner, repo, tree, token)
         )
+
+        health_score = RepoHealthScorer.calculate_score(tree)
 
         data = RepositoryData(
             info=info,
@@ -49,7 +50,7 @@ async def analyze_repository(
             dependencies=dependencies,
             git_stats=git_stats,
             markdown_files=markdown_files,
-            health=health,
+            health_score=health_score,
         )
 
         return APIResponse(success=True, data=data)

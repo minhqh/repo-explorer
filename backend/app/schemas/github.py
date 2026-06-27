@@ -59,6 +59,22 @@ class GitStats(BaseModel):
     commit_timeline: List[CommitActivity]
     recent_commits: List[CommitDetail]
 
+class HealthIssue(BaseModel):
+    file: str
+    severity: str
+    impact: str
+
+class PenaltyBonus(BaseModel):
+    item: str
+    value: int
+    description: str
+
+class HealthScore(BaseModel):
+    total_score: int
+    grade: str
+    issues: List[HealthIssue]
+    penalties: List[PenaltyBonus]
+    bonuses: List[PenaltyBonus]
 
 class RepositoryData(BaseModel):
     info: RepoInfo
@@ -68,4 +84,4 @@ class RepositoryData(BaseModel):
     dependencies: DependenciesData
     git_stats: Optional[GitStats] = None
     markdown_files: Dict[str, str] = {}
-    health: list[dict] = []
+    health_score: Optional[HealthScore] = None

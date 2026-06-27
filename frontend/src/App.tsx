@@ -12,6 +12,7 @@ import {
   GitActivityTab,
   EmptyState,
   ErrorState,
+  HealthScoreDashboard,
 } from './components';
 import { downloadMarkdown, generateContextPack } from './ultis/contextBuilder';
 
@@ -176,14 +177,25 @@ function App() {
             {activeTab === 'overview' && (
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 2fr',
+                  display: 'flex',
+                  flexDirection: 'column',
                   gap: '24px',
-                  alignItems: 'start',
+                  width: '100%',
                 }}
               >
-                <RepoInfo info={data.info} />
-                <ReadmeViewer content={data.readme} />
+                {data.health_score && <HealthScoreDashboard scoreData={data.health_score} />}
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 2fr',
+                    gap: '24px',
+                    alignItems: 'start',
+                  }}
+                >
+                  <RepoInfo info={data.info} />
+                  <ReadmeViewer content={data.readme} />
+                </div>
               </div>
             )}
 

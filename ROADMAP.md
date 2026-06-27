@@ -56,7 +56,7 @@
 
 - [x] **Task 16:** Repository Timeline (Visualize project evolution from Git Log)
 - [x] **Task 17:** LLM Context Pack Generator (`repo_context.md`)
-- [ ] **Task 18:** Rule-based Configuration Scanner (Check missing `.gitignore`, `LICENSE`, etc.)
+- [x] **Task 18:** Rule-based Configuration Scanner (Check missing `.gitignore`, `LICENSE`, etc.)
 
 > 🛑 **Technical Gate 2: Testing**
 >
@@ -70,7 +70,7 @@
 >
 ---
 
-- [ ] **Task 19:** Repository Snapshot & Health Score Dashboard
+- [x] **Task 19:** Repository Snapshot & Health Score Dashboard
 - [ ] **Task 20:** Export Analysis Report (Generate `report.md/pdf`)
 
 > 🛑 **Technical Gate 3: Dockerization**
