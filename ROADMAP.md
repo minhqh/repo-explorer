@@ -75,9 +75,18 @@
 
 > 🛑 **Technical Gate 3: Dockerization**
 >
-> Viết `Dockerfile` và `docker-compose.yml`.
+> Status: ✅ Passed
 >
-> **Done when:** Dự án chạy hoàn toàn bằng `docker compose up`.
+> Tools:
+>
+> - Docker
+> - Docker Compose
+>
+> Verified:
+>
+> - `backend` chạy mượt mà trên port 8000.
+> - `frontend` chạy hoàn hảo trên port 5173.
+> - Khởi chạy toàn bộ dự án chỉ với 1 lệnh `docker compose up`.
 
 ---
 
