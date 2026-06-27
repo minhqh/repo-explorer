@@ -16,6 +16,19 @@ Một công cụ phân tích repository mã nguồn mở mạnh mẽ, cung cấp
 - **Backend:** FastAPI, Python, httpx (Async HTTP Client), Pydantic.
 - **Kiến trúc:** Monorepo, Service Layer Pattern, Separation of Concerns.
 
+### 🐳 Khởi chạy nhanh bằng Docker (Khuyên dùng)
+
+Yêu cầu hệ thống đã cài đặt sẵn Docker và Docker Compose.
+
+```bash
+# Khởi chạy toàn bộ Frontend và Backend
+docker compose up --build
+```
+
+Frontend: `http://localhost:5173`
+
+Backend API: `http://localhost:8000/docs`
+
 ## 🚀 Hướng dẫn cài đặt (Local Development)
 
 Dự án được tối ưu để chạy trên môi trường Ubuntu/Linux bằng cách khởi chạy song song 2 terminal.

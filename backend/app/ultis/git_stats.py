@@ -44,9 +44,11 @@ def calculate_git_statistics(commits_data: List[dict]) -> GitStats:
 
         sha = item.get("sha", "")
         msg_raw = item.get("commit", {}).get("message", "No message")
-        message = msg_raw.split('\n')[0]
+        message = msg_raw.split("\n")[0]
 
-        recent_commits.append(CommitDetail(sha=sha, message=message, author=author_name, date=date_str))
+        recent_commits.append(
+            CommitDetail(sha=sha, message=message, author=author_name, date=date_str)
+        )
 
     author_counts = Counter(authors)
     date_counts = Counter(dates)

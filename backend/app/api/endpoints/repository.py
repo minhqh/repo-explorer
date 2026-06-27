@@ -34,10 +34,9 @@ async def analyze_repository(
             github_service.get_git_stats(owner, repo, token),
         )
 
-
         dependencies, markdown_files = await asyncio.gather(
             github_service.get_dependencies(owner, repo, tree, token),
-            github_service.get_important_markdowns(owner, repo, tree, token)
+            github_service.get_important_markdowns(owner, repo, tree, token),
         )
 
         health_score = RepoHealthScorer.calculate_score(tree)
@@ -61,21 +60,24 @@ async def analyze_repository(
     except Exception as e:
         return APIResponse(success=False, message=f"Lỗi hệ thống: {str(e)}")
 
+
 @router.get("/commits")
 async def get_more_commits(
-    owner: str, 
-    repo: str, 
-    page: int = 2, 
-    authorization: Optional[str] = Header(None)
+    owner: str, repo: str, page: int = 2, authorization: Optional[str] = Header(None)
 ):
-    token = authorization.replace("Bearer ", "").strip() if authorization and authorization.startswith("Bearer ") else None
+    token = (
+        authorization.replace("Bearer ", "").strip()
+        if authorization and authorization.startswith("Bearer ")
+        else None
+    )
     try:
         commits_data = await github_service.get_commits_page(owner, repo, page, token)
-        
+
         # Tận dụng lại utils để parse ra model gọn gàng
         from app.ultis.git_stats import calculate_git_statistics
+
         stats = calculate_git_statistics(commits_data)
-        
+
         return APIResponse(success=True, data=stats.recent_commits)
     except Exception as e:
         return APIResponse(success=False, message=str(e))

@@ -5,12 +5,18 @@ export const generateAnalysisReport = (data: RepositoryData): string => {
 
   const getGradeEmoji = (grade?: string) => {
     switch (grade) {
-      case 'A': return '🏆';
-      case 'B': return '🥈';
-      case 'C': return '🥉';
-      case 'D': return '⚠️';
-      case 'F': return '🚨';
-      default: return '❓';
+      case 'A':
+        return '🏆';
+      case 'B':
+        return '🥈';
+      case 'C':
+        return '🥉';
+      case 'D':
+        return '⚠️';
+      case 'F':
+        return '🚨';
+      default:
+        return '❓';
     }
   };
 
@@ -27,19 +33,29 @@ export const generateAnalysisReport = (data: RepositoryData): string => {
 - **Hạng (Grade):** **${health_score?.grade || 'N/A'}** ${getGradeEmoji(health_score?.grade)}
 
 ### 🚨 Cần khắc phục (Penalties)
-${health_score?.penalties.length 
-  ? health_score.penalties.map(p => `- **${p.item}**: ${p.description} (${p.value} điểm)`).join('\n') 
-  : '- *Không có lỗi nghiêm trọng nào.*'}
+${
+  health_score?.penalties.length
+    ? health_score.penalties
+        .map((p) => `- **${p.item}**: ${p.description} (${p.value} điểm)`)
+        .join('\n')
+    : '- *Không có lỗi nghiêm trọng nào.*'
+}
 
 ### ✨ Điểm cộng (Bonuses)
-${health_score?.bonuses.length 
-  ? health_score.bonuses.map(b => `- **${b.item}**: ${b.description} (+${b.value} điểm)`).join('\n') 
-  : '- *Chưa có tiêu chí thưởng nào đạt yêu cầu.*'}
+${
+  health_score?.bonuses.length
+    ? health_score.bonuses
+        .map((b) => `- **${b.item}**: ${b.description} (+${b.value} điểm)`)
+        .join('\n')
+    : '- *Chưa có tiêu chí thưởng nào đạt yêu cầu.*'
+}
 
 ## 3. 💻 Thống kê Ngôn ngữ
-${languages.length > 0 
-  ? languages.map(l => `- **${l.name}**: ${l.percent}%`).join('\n')
-  : '- *Không có dữ liệu ngôn ngữ.*'}
+${
+  languages.length > 0
+    ? languages.map((l) => `- **${l.name}**: ${l.percent}%`).join('\n')
+    : '- *Không có dữ liệu ngôn ngữ.*'
+}
 
 ## 4. 📦 Thư viện (Dependencies)
 - **Frontend:** ${dependencies.frontend.length > 0 ? dependencies.frontend.join(', ') : '*Không có hoặc không nhận diện được*'}

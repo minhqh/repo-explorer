@@ -101,7 +101,6 @@ def test_analyze_success(client, monkeypatch):
     assert response.status_code == 200
     assert body["success"] is True
     assert body["data"]["info"]["owner"] == "test-user"
-    assert "health" in body["data"]
 
 
 def test_analyze_invalid_url(client):

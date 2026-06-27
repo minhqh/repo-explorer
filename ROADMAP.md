@@ -94,6 +94,8 @@
 >
 > Tạo `CHANGELOG.md` và cập nhật README.
 >
+> Status: ✅ Passed
+>
 > **Done when:** Test pass, lint pass, Docker chạy ổn và tag `v1.5.0`.
 
 ---

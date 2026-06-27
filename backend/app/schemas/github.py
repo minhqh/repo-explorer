@@ -46,11 +46,13 @@ class CommitActivity(BaseModel):
     date: str
     count: int
 
+
 class CommitDetail(BaseModel):
     sha: str
     message: str
     author: str
     date: str
+
 
 class GitStats(BaseModel):
     total_commits: int
@@ -59,15 +61,18 @@ class GitStats(BaseModel):
     commit_timeline: List[CommitActivity]
     recent_commits: List[CommitDetail]
 
+
 class HealthIssue(BaseModel):
     file: str
     severity: str
     impact: str
 
+
 class PenaltyBonus(BaseModel):
     item: str
     value: int
     description: str
+
 
 class HealthScore(BaseModel):
     total_score: int
@@ -75,6 +80,7 @@ class HealthScore(BaseModel):
     issues: List[HealthIssue]
     penalties: List[PenaltyBonus]
     bonuses: List[PenaltyBonus]
+
 
 class RepositoryData(BaseModel):
     info: RepoInfo

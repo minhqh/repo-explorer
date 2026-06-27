@@ -30,12 +30,10 @@ def test_invalid_package_json():
 
 
 def test_requirements_txt():
-    result = parse_requirements_txt(
-        """
+    result = parse_requirements_txt("""
         fastapi==0.1
         numpy>=2.0
-        """
-    )
+        """)
 
     assert "fastapi" in result
     assert "numpy" in result
