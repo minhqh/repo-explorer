@@ -71,7 +71,7 @@
 ---
 
 - [x] **Task 19:** Repository Snapshot & Health Score Dashboard
-- [ ] **Task 20:** Export Analysis Report (Generate `report.md/pdf`)
+- [x] **Task 20:** Export Analysis Report (Generate `report.md/pdf`)
 
 > 🛑 **Technical Gate 3: Dockerization**
 >

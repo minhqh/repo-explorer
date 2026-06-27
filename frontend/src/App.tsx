@@ -15,6 +15,7 @@ import {
   HealthScoreDashboard,
 } from './components';
 import { downloadMarkdown, generateContextPack } from './ultis/contextBuilder';
+import { generateAnalysisReport } from './ultis/reportBuilder';
 
 function App() {
   const { data, isLoading, error, analyze } = useRepoAnalyzer();
@@ -150,29 +151,50 @@ function App() {
               >
                 ✨ AI Analyze
               </button>
-              <button
-                onClick={() => {
-                  const mdContext = generateContextPack(data);
-                  downloadMarkdown(mdContext, `${data.info.name}_context_pack.md`);
-                }}
-                style={{
-                  marginLeft: 'auto', // Đẩy nút về bên phải
-                  backgroundColor: '#2da44e',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                📦 Download AI Context
-              </button>
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: '10px' }}>
+                {/* Nút mới: Export Report dành cho con người */}
+                <button
+                  onClick={() => {
+                    const report = generateAnalysisReport(data);
+                    downloadMarkdown(report, `${data.info.name}_analysis_report.md`);
+                  }}
+                  style={{
+                    backgroundColor: '#0969da', // Xanh dương GitHub
+                    color: '#fff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  📄 Export Report
+                </button>
+                <button
+                  onClick={() => {
+                    const mdContext = generateContextPack(data);
+                    downloadMarkdown(mdContext, `${data.info.name}_context_pack.md`);
+                  }}
+                  style={{
+                    backgroundColor: '#2da44e',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  📦 Download AI Context
+                </button>
+              </div>
             </div>
-
             {/* 2. Nội dung thay đổi theo Tab */}
             {activeTab === 'overview' && (
               <div
